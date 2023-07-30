@@ -94,41 +94,41 @@ pub struct RotateX {
     pub bbox: Aabb,
 }
 impl RotateX {
-    pub fn construct(p: Arc<dyn Hittable>, angle: f64) -> Self {
-        let radians = angle.to_radians();
-        let sin_theta = radians.sin();
-        let cos_theta = radians.cos();
-        let mut bbox = Aabb::new();
-        let hasbox = p.bounding_box(0.0, 1.0, &mut bbox);
-        println!("bbox: {:?}", bbox);
-        let mut mini = Point3::construct(&[INFINITY, INFINITY, INFINITY]);
-        let mut maxi = Point3::construct(&[-INFINITY, -INFINITY, -INFINITY]);
+    // pub fn construct(p: Arc<dyn Hittable>, angle: f64) -> Self {
+    //     let radians = angle.to_radians();
+    //     let sin_theta = radians.sin();
+    //     let cos_theta = radians.cos();
+    //     let mut bbox = Aabb::new();
+    //     let hasbox = p.bounding_box(0.0, 1.0, &mut bbox);
+    //     println!("bbox: {:?}", bbox);
+    //     let mut mini = Point3::construct(&[INFINITY, INFINITY, INFINITY]);
+    //     let mut maxi = Point3::construct(&[-INFINITY, -INFINITY, -INFINITY]);
 
-        for i in 0..2 {
-            for j in 0..2 {
-                for k in 0..2 {
-                    let x = i as f64 * bbox.maximum().x() + (1.0 - i as f64) * bbox.minimum().x();
-                    let y = j as f64 * bbox.maximum().y() + (1.0 - j as f64) * bbox.minimum().y();
-                    let z = k as f64 * bbox.maximum().z() + (1.0 - k as f64) * bbox.minimum().z();
+    //     for i in 0..2 {
+    //         for j in 0..2 {
+    //             for k in 0..2 {
+    //                 let x = i as f64 * bbox.maximum().x() + (1.0 - i as f64) * bbox.minimum().x();
+    //                 let y = j as f64 * bbox.maximum().y() + (1.0 - j as f64) * bbox.minimum().y();
+    //                 let z = k as f64 * bbox.maximum().z() + (1.0 - k as f64) * bbox.minimum().z();
 
-                    let pre_rot = Vec3::construct(&[x, y, z]);
-                    let tester = rotate_vec_x(&pre_rot, -sin_theta, cos_theta);
-                    for c in 0..3 {
-                        mini.e[c] = tester.e[c].min(mini.e[c]);
-                        maxi.e[c] = tester.e[c].max(maxi.e[c]);
-                    }
-                }
-            }
-        }
-        bbox = Aabb::construct(&mini, &maxi);
-        Self {
-            ptr: Arc::clone(&p),
-            sin_theta,
-            cos_theta,
-            hasbox,
-            bbox,
-        }
-    }
+    //                 let pre_rot = Vec3::construct(&[x, y, z]);
+    //                 let tester = rotate_vec_x(&pre_rot, -sin_theta, cos_theta);
+    //                 for c in 0..3 {
+    //                     mini.e[c] = tester.e[c].min(mini.e[c]);
+    //                     maxi.e[c] = tester.e[c].max(maxi.e[c]);
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     bbox = Aabb::construct(&mini, &maxi);
+    //     Self {
+    //         ptr: Arc::clone(&p),
+    //         sin_theta,
+    //         cos_theta,
+    //         hasbox,
+    //         bbox,
+    //     }
+    // }
 }
 impl Hittable for RotateX {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64, rec: &mut HitRecord) -> bool {
@@ -230,41 +230,41 @@ pub struct RotateZ {
     pub bbox: Aabb,
 }
 impl RotateZ {
-    pub fn construct(p: Arc<dyn Hittable>, angle: f64) -> Self {
-        let radians = angle.to_radians();
-        let sin_theta = radians.sin();
-        let cos_theta = radians.cos();
-        let mut bbox = Aabb::new();
-        let hasbox = p.bounding_box(0.0, 1.0, &mut bbox);
-        println!("bbox: {:?}", bbox);
-        let mut mini = Point3::construct(&[INFINITY, INFINITY, INFINITY]);
-        let mut maxi = Point3::construct(&[-INFINITY, -INFINITY, -INFINITY]);
+    // pub fn construct(p: Arc<dyn Hittable>, angle: f64) -> Self {
+    //     let radians = angle.to_radians();
+    //     let sin_theta = radians.sin();
+    //     let cos_theta = radians.cos();
+    //     let mut bbox = Aabb::new();
+    //     let hasbox = p.bounding_box(0.0, 1.0, &mut bbox);
+    //     println!("bbox: {:?}", bbox);
+    //     let mut mini = Point3::construct(&[INFINITY, INFINITY, INFINITY]);
+    //     let mut maxi = Point3::construct(&[-INFINITY, -INFINITY, -INFINITY]);
 
-        for i in 0..2 {
-            for j in 0..2 {
-                for k in 0..2 {
-                    let x = i as f64 * bbox.maximum().x() + (1.0 - i as f64) * bbox.minimum().x();
-                    let y = j as f64 * bbox.maximum().y() + (1.0 - j as f64) * bbox.minimum().y();
-                    let z = k as f64 * bbox.maximum().z() + (1.0 - k as f64) * bbox.minimum().z();
+    //     for i in 0..2 {
+    //         for j in 0..2 {
+    //             for k in 0..2 {
+    //                 let x = i as f64 * bbox.maximum().x() + (1.0 - i as f64) * bbox.minimum().x();
+    //                 let y = j as f64 * bbox.maximum().y() + (1.0 - j as f64) * bbox.minimum().y();
+    //                 let z = k as f64 * bbox.maximum().z() + (1.0 - k as f64) * bbox.minimum().z();
 
-                    let pre_rotate = Vec3::construct(&[x, y, z]);
-                    let tester = rotate_vec_z(&pre_rotate, -sin_theta, cos_theta);
-                    for c in 0..3 {
-                        mini.e[c] = tester.e[c].min(mini.e[c]);
-                        maxi.e[c] = tester.e[c].max(maxi.e[c]);
-                    }
-                }
-            }
-        }
-        bbox = Aabb::construct(&mini, &maxi);
-        Self {
-            ptr: Arc::clone(&p),
-            sin_theta,
-            cos_theta,
-            hasbox,
-            bbox,
-        }
-    }
+    //                 let pre_rotate = Vec3::construct(&[x, y, z]);
+    //                 let tester = rotate_vec_z(&pre_rotate, -sin_theta, cos_theta);
+    //                 for c in 0..3 {
+    //                     mini.e[c] = tester.e[c].min(mini.e[c]);
+    //                     maxi.e[c] = tester.e[c].max(maxi.e[c]);
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     bbox = Aabb::construct(&mini, &maxi);
+    //     Self {
+    //         ptr: Arc::clone(&p),
+    //         sin_theta,
+    //         cos_theta,
+    //         hasbox,
+    //         bbox,
+    //     }
+    // }
 }
 impl Hittable for RotateZ {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64, rec: &mut HitRecord) -> bool {

@@ -2,7 +2,6 @@ use crate::perlin::Perlin;
 use crate::rt_weekend::clamp;
 use crate::vec3::{Color3, Point3};
 use image::GenericImageView;
-use image::{ImageBuffer, RgbImage};
 use std::sync::Arc;
 
 pub trait Texture: Send + Sync {

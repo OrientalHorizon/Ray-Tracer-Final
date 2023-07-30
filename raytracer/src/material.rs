@@ -131,7 +131,7 @@ impl Material for Dielectric {
         attenuation: &mut Vec3,
         scattered: &mut Ray,
     ) -> bool {
-        *attenuation = Vec3::construct(&[1.0, 1.0, 1.0]);
+        *attenuation = Vec3::construct(&[0.0, 0.0, 1.0]);
         let refraction_ratio = if rec.front_face {
             1.0 / self.ir
         } else {

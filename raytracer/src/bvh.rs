@@ -13,9 +13,9 @@ impl BVHNode {
     pub fn new(list: &HittableList, time0: f64, time1: f64) -> Self {
         Self::construct(&list.objects, time0, time1)
     }
-    pub fn construct(objects: &Vec<Arc<dyn Hittable>>, time0: f64, time1: f64) -> Self {
+    pub fn construct(objects: &[Arc<dyn Hittable>], time0: f64, time1: f64) -> Self {
         // println!("{}", objects.len());
-        let mut src_objects = objects.clone();
+        let mut src_objects = objects.to_owned();
         let left;
         let right;
         let axis = random_int(0, 2) as usize;
@@ -35,7 +35,7 @@ impl BVHNode {
                 let mut aabb_b = Aabb::new();
                 let bool_a = a.bounding_box(time0, time1, &mut aabb_a);
                 let bool_b = b.bounding_box(time0, time1, &mut aabb_b);
-                if bool_a == false || bool_b == false {
+                if !bool_a || !bool_b {
                     panic!("fuck you");
                 }
                 let min_a = aabb_a.minimum().e[axis];
@@ -93,17 +93,27 @@ impl Hittable for BVHNode {
             *rec = tmp_rec.clone();
             ret = true;
         }
-        if self.right.is_some() {
-            if self
+        if self.right.is_some()
+            && self
                 .right
                 .as_ref()
                 .unwrap()
                 .hit(r, t_min, t_max_mut, &mut tmp_rec)
-            {
-                *rec = tmp_rec;
-                ret = true;
-            }
+        {
+            *rec = tmp_rec;
+            ret = true;
         }
+        // if self.right.is_some() {
+        //     if self
+        //         .right
+        //         .as_ref()
+        //         .unwrap()
+        //         .hit(r, t_min, t_max_mut, &mut tmp_rec)
+        //     {
+        //         *rec = tmp_rec;
+        //         ret = true;
+        //     }
+        // }
         ret
     }
 }

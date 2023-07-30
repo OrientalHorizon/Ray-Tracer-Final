@@ -4,7 +4,6 @@ use std::thread;
 use std::{fs::File, process::exit};
 
 use console::style;
-use image::GenericImageView;
 use image::{ImageBuffer, RgbImage};
 use indicatif::ProgressBar;
 
@@ -13,15 +12,14 @@ use boxes::Box_;
 use bvh::BVHNode;
 use camera::Camera;
 use constant_medium::ConstantMedium;
-use hittable::{HitRecord, Hittable, RotateX, RotateY, RotateZ, Translate};
+use hittable::{HitRecord, Hittable, RotateY, Translate};
 use hittable_list::HittableList;
 use material::DiffuseLight;
 use material::{Dielectric, Lambertian, Material, Metal};
 use moving_sphere::MovingSphere;
 use obj_loader::load_new;
-use obj_loader::load_objects;
 use ray::Ray;
-use rt_weekend::{random_double, random_double_range};
+use rt_weekend::{random_double, random_double_range, INFINITY};
 use sphere::Sphere;
 use texture::{CheckerTexture, ImageTexture, NoiseTexture, Texture};
 use vec3::{Color3, Point3, Vec3};
@@ -101,78 +99,78 @@ pub fn write_color(pixel_color: &Color3, samples_per_pixel: u32) -> [u8; 3] {
     ]
 }
 
-fn random_scene() -> HittableList {
-    let mut world = HittableList::new();
+// fn random_scene() -> HittableList {
+//     let mut world = HittableList::new();
 
-    // let ground_material = Arc::new(Lambertian::construct(&Color3::construct(&[0.5, 0.5, 0.5])));
-    // world.add(Arc::new(Sphere::construct(
-    //     &Point3::construct(&[0.0, -1000.0, 0.0]),
-    //     1000.0,
-    //     ground_material,
-    // )));
-    let checker = Arc::new(CheckerTexture::construct_color(
-        &Color3::construct(&[0.2, 0.3, 0.1]),
-        &Color3::construct(&[0.9, 0.9, 0.9]),
-    ));
-    world.add(Arc::new(Sphere::construct(
-        &Point3::construct(&[0.0, -1000.0, 0.0]),
-        1000.0,
-        Arc::new(Lambertian::construct_texture(checker)),
-    )));
+//     // let ground_material = Arc::new(Lambertian::construct(&Color3::construct(&[0.5, 0.5, 0.5])));
+//     // world.add(Arc::new(Sphere::construct(
+//     //     &Point3::construct(&[0.0, -1000.0, 0.0]),
+//     //     1000.0,
+//     //     ground_material,
+//     // )));
+//     let checker = Arc::new(CheckerTexture::construct_color(
+//         &Color3::construct(&[0.2, 0.3, 0.1]),
+//         &Color3::construct(&[0.9, 0.9, 0.9]),
+//     ));
+//     world.add(Arc::new(Sphere::construct(
+//         &Point3::construct(&[0.0, -1000.0, 0.0]),
+//         1000.0,
+//         Arc::new(Lambertian::construct_texture(checker)),
+//     )));
 
-    for a in -11..11 {
-        for b in -11..11 {
-            let choose_mat = random_double();
-            let center = Point3::construct(&[
-                a as f64 + 0.9 * random_double(),
-                0.2,
-                b as f64 + 0.9 * random_double(),
-            ]);
+//     for a in -11..11 {
+//         for b in -11..11 {
+//             let choose_mat = random_double();
+//             let center = Point3::construct(&[
+//                 a as f64 + 0.9 * random_double(),
+//                 0.2,
+//                 b as f64 + 0.9 * random_double(),
+//             ]);
 
-            if (center - Point3::construct(&[4.0, 0.2, 0.0])).length() > 0.9 {
-                let sphere_material: Arc<dyn Material>;
-                if choose_mat < 0.8 {
-                    // diffuse
-                    let albedo = Color3::random() * Color3::random();
-                    sphere_material = Arc::new(Lambertian::construct(&albedo));
-                    let center2 =
-                        center + Vec3::construct(&[0.0, random_double_range(0.0, 0.5), 0.0]);
-                    world.add(Arc::new(MovingSphere::construct(
-                        &center,
-                        &center2,
-                        0.0,
-                        1.0,
-                        0.2,
-                        sphere_material,
-                    )));
-                }
-            }
-        }
-    }
+//             if (center - Point3::construct(&[4.0, 0.2, 0.0])).length() > 0.9 {
+//                 let sphere_material: Arc<dyn Material>;
+//                 if choose_mat < 0.8 {
+//                     // diffuse
+//                     let albedo = Color3::random() * Color3::random();
+//                     sphere_material = Arc::new(Lambertian::construct(&albedo));
+//                     let center2 =
+//                         center + Vec3::construct(&[0.0, random_double_range(0.0, 0.5), 0.0]);
+//                     world.add(Arc::new(MovingSphere::construct(
+//                         &center,
+//                         &center2,
+//                         0.0,
+//                         1.0,
+//                         0.2,
+//                         sphere_material,
+//                     )));
+//                 }
+//             }
+//         }
+//     }
 
-    let material1 = Arc::new(Dielectric::construct(1.5));
-    world.add(Arc::new(Sphere::construct(
-        &Point3::construct(&[0.0, 1.0, 0.0]),
-        1.0,
-        material1,
-    )));
+//     let material1 = Arc::new(Dielectric::construct(1.5));
+//     world.add(Arc::new(Sphere::construct(
+//         &Point3::construct(&[0.0, 1.0, 0.0]),
+//         1.0,
+//         material1,
+//     )));
 
-    let material2 = Arc::new(Lambertian::construct(&Color3::construct(&[0.4, 0.2, 0.1])));
-    world.add(Arc::new(Sphere::construct(
-        &Point3::construct(&[-4.0, 1.0, 0.0]),
-        1.0,
-        material2,
-    )));
+//     let material2 = Arc::new(Lambertian::construct(&Color3::construct(&[0.4, 0.2, 0.1])));
+//     world.add(Arc::new(Sphere::construct(
+//         &Point3::construct(&[-4.0, 1.0, 0.0]),
+//         1.0,
+//         material2,
+//     )));
 
-    let material3 = Arc::new(Metal::construct(&Color3::construct(&[0.7, 0.6, 0.5]), 0.0));
-    world.add(Arc::new(Sphere::construct(
-        &Point3::construct(&[4.0, 1.0, 0.0]),
-        1.0,
-        material3,
-    )));
+//     let material3 = Arc::new(Metal::construct(&Color3::construct(&[0.7, 0.6, 0.5]), 0.0));
+//     world.add(Arc::new(Sphere::construct(
+//         &Point3::construct(&[4.0, 1.0, 0.0]),
+//         1.0,
+//         material3,
+//     )));
 
-    world
-}
+//     world
+// }
 
 pub fn two_spheres() -> HittableList {
     let mut objects = HittableList::new();
@@ -305,7 +303,7 @@ pub fn cornell_box() -> HittableList {
         0.0,
         555.0,
         555.0,
-        white.clone(),
+        white,
     )));
 
     // objects.add(Arc::new(Box::construct(
@@ -550,59 +548,73 @@ pub fn final_scene() -> HittableList {
 
     objects
 }
-pub fn test_tgv() -> HittableList {
-    let mut objects = HittableList::new();
+pub fn test_city() -> HittableList {
+    // let mut center = Vec3::new(0.0, 0.0, 0.0);
+    let albedo = Color3::construct(&[0.35, 0.35, 0.45]);
+    // let mat_water = Lambertian::new_from_color(&water);
+    // let mat_water = Dielectric::new(1.33);
+    // let mat = Lambertian::new_from_color(&albedo);
     let mut center = Point3::new();
-    let albedo = Color3::construct(&[0.65, 0.65, 0.65]);
-    // let fuzz = 0.25;
-    let mat = Lambertian::construct(&albedo);
-    let translate1 = Arc::new(load_new("City Islands", 0.5 * 2.5, &albedo, &mut center));
-    let pre_rotate = Arc::new(Translate::construct(
-        translate1,
-        &(Vec3::construct(&[0.0, 0.0, 0.0]) - center),
-    ));
-    // let rotate = Arc::new(RotateY::construct(pre_rotate, 90.0));
-    // let rot = Arc::new(RotateZ::construct(pre_rotate, 90.0));
-    // let rot_x = Arc::new(RotateX::construct(pre_rotate, -90.0));
-    // let rot_xy = Arc::new(RotateY::construct(rot_x, 180.0));
-    objects.add(pre_rotate);
-    objects
+    let mut objects = load_new("City Islands", 1.0, &albedo, &mut center);
+    objects.add(Arc::new(XzRect::construct(
+        -INFINITY,
+        INFINITY,
+        -INFINITY,
+        250.0,
+        0.0,
+        Arc::new(Metal::construct(
+            &Color3::construct(&[135. / 256., 206. / 256., 235. / 256.]),
+            0.05,
+        )),
+    )));
+    //135. / 256., 206. / 256., 235. / 256.
+    objects.add(Arc::new(Sphere::construct(
+        &Point3::construct(&[0.0, 3000.0, -1000.0]),
+        1000.0,
+        Arc::new(DiffuseLight::construct_color(&Color3::construct(&[
+            5.0, 5.0, 5.0,
+        ]))),
+    )));
+    // let ocean = load_pro("Ocean", Vec3::new(6000., 1500., 1500.), &water);
+    // objects.add(Box::new(Translate::new(
+    //     RotateY::new(ocean, 0.0),
+    //     &Vec3::new(0., -50., 0.),
+    // )));
+    let world = BVHNode::construct(&objects.objects, 0.0, 1.0);
+    HittableList {
+        objects: vec![Arc::new(world)],
+    }
 }
 
 fn main() {
     // let img =
 
-    let path = std::path::Path::new("output/test-nimbasa.jpg");
+    let path = std::path::Path::new("output/final-test.jpg");
     let prefix = path.parent().unwrap();
     std::fs::create_dir_all(prefix).expect("Cannot create all the parents");
 
     // Image
     const ASPECT_RATIO: f64 = 16.0 / 9.0;
-    const IMAGE_WIDTH: u32 = 160;
+    const IMAGE_WIDTH: u32 = 3840;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    const SAMPLES_PER_PIXEL: u32 = 16 * 4;
+    const SAMPLES_PER_PIXEL: u32 = 16 * 200;
     const MAX_DEPTH: i32 = 50;
 
     // World
-    // let mut world = random_scene();
-
-    let world: HittableList;
-
-    let lookfrom = Point3::construct(&[-500.0, 300.0, -500.0]);
+    let lookfrom = 0.255 * Point3::construct(&[0.0, 1000.0, -4000.0]);
     let lookat = Point3::construct(&[0.0, 0.0, 0.0]);
     let vfov = 40.0;
     let aperture = 0.0;
-    let background = Color3::construct(&[0.9, 0.9, 0.9]); //Color3::construct(&[0.0, 0.0, 0.0]);
+    let background = Color3::construct(&[135. / 256., 206. / 256., 235. / 256.]); //Color3::construct(&[0.0, 0.0, 0.0]);
     let mth = 1;
-    match mth {
+    let world = match mth {
         1 => {
-            world = test_tgv();
+            test_city()
         }
         _ => {
-            world = final_scene();
-            // background = Color3::construct(&[0.0, 0.0, 0.0]);
+            final_scene()
         }
-    }
+    };
 
     // Camera
     // let lookfrom: Point3 = Point3::construct(&[13.0, 2.0, 3.0]);
@@ -642,7 +654,6 @@ fn main() {
                 recv.push(rx);
                 let cam = cam.clone();
                 let world = world.clone();
-                let background = background.clone();
                 let max_depth = MAX_DEPTH;
                 let image_width = IMAGE_WIDTH;
                 let image_height = IMAGE_HEIGHT;
