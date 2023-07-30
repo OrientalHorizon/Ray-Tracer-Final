@@ -563,7 +563,7 @@ pub fn test_city() -> HittableList {
         250.0,
         0.0,
         Arc::new(Metal::construct(
-            &Color3::construct(&[135. / 256., 206. / 256., 235. / 256.]),
+            &Color3::construct(&[135. / 256., 206. / 256., 235. / 256.]), // 135. / 256., 206. / 256., 235. / 256.
             0.05,
         )),
     )));
@@ -589,7 +589,7 @@ pub fn test_city() -> HittableList {
 fn main() {
     // let img =
 
-    let path = std::path::Path::new("output/final-test.jpg");
+    let path = std::path::Path::new("output/final.jpg");
     let prefix = path.parent().unwrap();
     std::fs::create_dir_all(prefix).expect("Cannot create all the parents");
 
@@ -605,7 +605,8 @@ fn main() {
     let lookat = Point3::construct(&[0.0, 0.0, 0.0]);
     let vfov = 40.0;
     let aperture = 0.0;
-    let background = Color3::construct(&[135. / 256., 206. / 256., 235. / 256.]); //Color3::construct(&[0.0, 0.0, 0.0]);
+    // 135. / 256., 206. / 256., 235. / 256.
+    let background = Color3::construct(&[1.0, 1.0, 1.0]);
     let mth = 1;
     let world = match mth {
         1 => {
